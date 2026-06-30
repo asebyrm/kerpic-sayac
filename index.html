@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Kerpiçte Kaç Kişi Var</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, sans-serif;
+    background: #111;
+    color: #fff;
+  }
+  h1 { font-size: 1.2rem; opacity: 0.6; margin-bottom: 0; }
+  .sayi { font-size: 8rem; font-weight: 800; margin: 0.2em 0; }
+  .durum { font-size: 1rem; opacity: 0.6; }
+  .offline { color: #f55; }
+</style>
+</head>
+<body>
+  <h1>Kerpiçte Kaç Kişi Var</h1>
+  <div class="sayi" id="sayi">--</div>
+  <div class="durum" id="durum">yükleniyor...</div>
+
+<script>
+async function guncelle() {
+  try {
+    const r = await fetch('/api/sayi');
+    const d = await r.json();
+    const sayiEl = document.getElementById('sayi');
+    const durumEl = document.getElementById('durum');
+
+    if (d.cevrimici) {
+      sayiEl.textContent = d.kisi_sayisi;
+      durumEl.textContent = 'canlı';
+      durumEl.className = 'durum';
+    } else {
+      sayiEl.textContent = '?';
+      durumEl.textContent = 'kamera çevrimdışı (bilgisayar kapalı)';
+      durumEl.className = 'durum offline';
+    }
+  } catch (e) {
+    document.getElementById('durum').textContent = 'bağlantı hatası';
+  }
+}
+
+guncelle();
+setInterval(guncelle, 3000);
+</script>
+</body>
+</html>
